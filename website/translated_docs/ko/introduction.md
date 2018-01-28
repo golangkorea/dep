@@ -1,9 +1,9 @@
 ---
-id: introduction
-title: Getting Started
+id: 소개
+title: 시작하기
 ---
-Welcome! This is documentation for dep, the "official experiment" dependency management tool for the Go language. Dep is a tool intended primarily for use by developers, to support the work of actually writing and shipping code. It is *not* intended for end users who are installing Go software - that's what `go get` does.
+환영합니다! Go 언어를 위한 의존성 관리 도구의 "공식적인 실험"이라고 할 수 있는 Dep의 문서화입니다. Dep은 실제로 코드를 작성하고 배포하는 작업을 지원하기 위해 주로 개발자들을 위해 만들어진 툴입니다. Go 소프트웨어를 설치하는 최종 사용자를 위한 툴은 *아닙니다* - 설치는 `go get`를 사용하면 됩니다.
 
-This site has both guides and reference documents. The guides are practical explanations of how to actually do things with dep, whereas the reference material provides deeper dives on specific topics. Of particular note is the [glossary](glossary.md) - if you're unfamiliar with terminology used in this documentation, make sure to check there!
+이 사이트는 가이드 및 참조 문서를 모두 제공합니다. 가이드는 실제로 dep를 사용해서 어떻게 작업을 하는지 설명하고, 참조 문서는 특정 주제에 대해 보다 심층적인 분석과 설명을 제공합니다. 이 문서에 사용된 용어가 생소하시면 [용어집](glossary.md)을 참고하십시요.
 
-After [installing dep](installation.md), if you're using it for the first time, check out [Creating a New Project](new-project.md). Or, if you have an existing Go project that you want to convert to dep, [Migrating to Dep](migrating.md) is probably the place to start.
+[dep을 설치](installation.md)하고 난 후, 처음으로 사용하는 경우에는, [새 프로젝트 만들기](new-project.md)를 참조하시기 바랍니다. 그렇지 않고, 이미 존재하는 Go 프로젝트를 dep으로 변환하고자 한다면, [Dep을 이전하기](migrating.md)가 시작하기 좋은 문서일 것입니다.
