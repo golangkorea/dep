@@ -16,4 +16,4 @@ dep를 커스터마이징해서 사용하고 싶다면, `go get` 명령어를 �
 go get -u github.com/golang/dep/cmd/dep
 ```
 
-dep은 Go 작업환경(workspace) 및 GOPATH 설정이 필요합니다. Go 작업환경과 GOPATH에 관해 잘 모르신다면, [Go 언어 문서](https://golang.org/doc/code.html#Organization)를 참고해서 로컬 작업환경을 설정하시길 바랍니다. dep의 모델은 GOPATH 설정 없이도 동작 가능한 수준까지 발전할 수도 있지만, 아직까지는 GOPATH 설정이 꼭 필요합니다.
+dep은 잘 동작하는 Go 작업환경(workspace) 및 GOPATH 설정이 필요합니다. Go 작업환경과 GOPATH에 관해 잘 모르신다면, [Go 언어 문서](https://golang.org/doc/code.html#Organization)를 참고해서 로컬 작업환경을 설정하시길 바랍니다. dep의 모델은 GOPATH 설정 없이도 동작 가능한 수준까지 발전할 수도 있지만, 아직까지는 GOPATH 설정이 꼭 필요합니다.
