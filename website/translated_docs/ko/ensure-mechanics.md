@@ -35,9 +35,9 @@ dep를 이러한 상태들 사이의 관계에 대한 단방향, 기능적 흐�
 
 ```go
 type SolveParameters struct {
-    RootPackageTree pkgtree.PackageTree // 파싱된 프로젝트 소스; 임포트 리스트를 포함한다
-    Manifest gps.RootManifest // Gopkg.toml
-    ...
+  RootPackageTree pkgtree.PackageTree // Parsed project src; contains lists of imports
+  Manifest gps.RootManifest // Gopkg.toml
+  ...
 }
 ```
 
@@ -49,10 +49,10 @@ type SolveParameters struct {
 
 dep의 디자인 목표중 하나는 이 두 "기능들"이 하는 일과 각 해당 결과안에서 야기하는 변화를 최소화하는 것이다. (참고: 현재 "최소화"는 비용함수를 통해 공식적으로 정의된 것은 아니다.) 결과적으로, 두 기능 모두 기존의 결과를 미리 들여다보고 실제로 수행해야 할 작업을 이해한다.
 
-* 해결 기능는 모든 입력(프로젝트 임포트 문 + `Gopkg.toml`의 규칙들)이 만족하는지 기존의 `Gopkg.lock`를 검사한다. 만족되었다면, 해결 기능이 완전히 실행을 하지 않을 수도 있다. 만족되지 않았다면, 해결 기능는 일단 작업을 진행한다. 하지만 `Gopkg.lock`에 가능한 최소의 변화만이 있도록 노력한다.
-* 작업중: 현재의 구현된 검사는 정제되지 않은 휴리스틱 검사에 의존하고 있어 어떤 경우는 틀릴 수도 있다. 이 부분을 [고칠 계획](https://github.com/golang/dep/issues/1496)을 갖고 있다.
-* 벤더링 기능는 `vendor/`안에 이미 있는 개별 프로젝트의 해쉬를 만들어서 디스크 상에 있는 코드가 `Gopkg.lock`파일이 나타내는 것과 같은지를 알아본다. 예상과 다른 프로젝트들만 기록된다.
-* 작업중: 해쉬 검사는 일반적으로 "벤더 확인절차"이라고 불리며, [아직 완성되지 않았다](https://github.com/golang/dep/issues/121) 이 확인절차가 없다면, dep은 `vendor/`안에 있는 코드가 정확한지 그렇지 않은지 알 방법이 없다; 따라서, dep은 `vendor/`의 상태가 정확하도록 보장하기 위해 모든 프로젝트를 방어적으로 재 작성해야 한다.
+* The solving function checks the existing `Gopkg.lock` to determine if all of its inputs (project import statements + `Gopkg.toml` rules) are satisfied. If they are, the solving function can be bypassed entirely. If not, the solving function proceeds, but attempts to change as few of the selections in `Gopkg.lock` as possible. 
+  * WIP: The current implementation's check relies on a coarse heuristic check that can be wrong in some cases. There is a [plan to fix this](https://github.com/golang/dep/issues/1496).
+* The vendoring function hashes each discrete project already in `vendor/` to see if the code present on disk is what `Gopkg.lock` indicates it should be. Only projects that deviate from expectations are written out. 
+  * WIP: the hashing check is generally referred to as "vendor verification," and [is not yet complete](https://github.com/golang/dep/issues/121). Without this verification, dep is blind to whether code in `vendor/` is correct or not; as such, dep must defensively re-write all projects to ensure the state of `vendor/` is correct.
 
 물론, 각 기능들이 미리 엿보기를 통해 기존의 결과가 이미 정확하다는 발견을 할 가능성도 있다. 그렇다면 아무런 작업을 할 필요도 없다. 어느 쪽이 든, 각 기능이 완료되면, 변경사항이 있던 없던 출력은 입력에 관하여 정확하다고 확신할 수 있다. 다른 말로 표현하면, 입력과 출력이 "동기화 되었다." 실제로, 동기화 됨은 dep의 "확인된 좋은 상태"이다; `dep ensure`가 (플래그 없이) 종료코드 0으로 끝나는 경우에, 프로젝트내 모든 4개의 상태는 동기화되었다.
 
@@ -131,11 +131,11 @@ If you run "dep ensure" again before actually importing it, it will disappear fr
 
 ```go
 type SolveParameters struct {
-    ...
-    Lock gps.Lock // Gopkg.lock
-    ToChange []gps.ProjectRoot // -update 에 주는 인자들
-    ChangeAll bool // -update에 인자가 전달되지 않은 경우 true
-    ...
+  ...
+  Lock gps.Lock // Gopkg.lock
+  ToChange []gps.ProjectRoot // args to -update
+  ChangeAll bool // true if no -update args passed
+  ...
 }
 ```
 
@@ -194,6 +194,6 @@ v1.2.0, v1.1.1, v1.1.0, v1.0.0, master
 | `version` (semver 범위)     | `"^1.0.0"`   | 범위가 허락하는 가장 최신의 버전을 갖도록 노력한다.                                                                   |
 | `branch`                  | `"master"`   | 지명된 브랜치의 현재 정점으로 움직이도록 노력한다.                                                                    |
 | `version` (범위가 아닌 semver) | `"=1.0.0"`   | 상류의 릴리즈가 움직인 경우에만 변화가 일어날 수 있다. (예를 들어, `git push --force <tag>`)                         |
-| `version` (semver가 아닌 경우) | `"foo"`      | 상류 릴지즈가 움직인 경우에만 변화가 일어날 수 있다.                                                                  |
+| `version` (semver가 아닌 경우) | `"foo"`      | 상류 릴리즈가 움직인 경우에만 변화가 일어날 수 있다.                                                                  |
 | `개정번호`                    | `aabbccd...` | 변화가 가능하지 않다.                                                                                    |
 | (없음)                      | (없음)         | [정렬 순서](https://godoc.org/github.com/golang/dep/gps#SortForUpgrade)에 따른, 작동하는 첫번째 버전 (권장 하지 않음) |
